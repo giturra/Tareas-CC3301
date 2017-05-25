@@ -19,9 +19,8 @@ int ubicarSilla() {
 
 int buscarSilla() {
 	pthread_mutex_lock(&mutex);
-	int ubicacion = ubicarSilla();
-	while (ubicacion == -1) {
-		printf("%s\n", "espero");
+	int ubicacion;
+	while ((ubicacion  = ubicarSilla()) == -1) {
 		pthread_cond_wait(&cond, &mutex);
 	}
 	sillas[(ubicacion+1)%5] = sillas[ubicacion] = 1;
