@@ -55,10 +55,10 @@ void *serv(long s) {
 	while ((strcmp((fin = getstr(s)),"fin")) != 0) {
 		pthread_cond_wait(&cond, &mutex);
 	}
-	if (strcmp(fin, "fin") == 0) {
-		desocuparSilla(silla);
-		printf("%s libera %d\n", nombre, silla);
-	}
+	desocuparSilla(silla);
+	printf("%s libera %d\n", nombre, silla);
+	
+	free(fin);
 	return NULL;
 }
 
@@ -67,20 +67,20 @@ int main(int argc, char **argv) {
 	int puerto;
 	pthread_t pid;
 	if (argc < 2) {
-		printf("Usage: %s <puerto>\n", argv[0]);
+		printf("Uso: %s <puerto>\n", argv[0]);
 		exit(1);
 	}
 	s = j_socket();
 	puerto = atoi(argv[1]);
 	if (j_bind(s, puerto) < 0) {
-		fprintf(stderr, "bind failed\n");
+		fprintf(stderr, "El bind falló\n");
 		exit(1);
 	}
 	for(;;) {
 		pthread_attr_t attr;
 		s2 = j_accept(s);
 		pthread_attr_init(&attr);
-		if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) { //No espera join
+		if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) { 
       		fprintf(stderr, "No se puede establecer el atributo\n");
     	}
     	if (pthread_create(&pid, &attr, (Thread_fun)serv, (void *)s2) != 0) {

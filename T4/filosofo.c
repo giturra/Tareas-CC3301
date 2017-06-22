@@ -14,6 +14,12 @@ int main(int argc, char **argv) {
 	char fin[4];
 	fin[3] = 0;
 	char *str = getenv("REST");
+	if (str == NULL) {
+		printf("Debe agregar la variable de entorno REST de la forma:\n");
+		printf("REST=<host>:<puerto>; export REST\n");
+		printf("Pero sin los <>\n");
+		exit(1);
+	}
 	char *puertoS = strchr(str, ':');
 
 	puertoS++;
@@ -25,13 +31,13 @@ int main(int argc, char **argv) {
 		}
 	}
 	if (argc < 2) {
-		printf("Usage: %s <nombre>\n", argv[0]);
+		printf("Uso: %s <nombre>\n", argv[0]);
 		exit(1);
 	}
 	s = j_socket();
 	nombre = argv[1];
 	if (j_connect(s, host, puerto) < 0) {
-		fprintf(stderr, "connection refused\n");
+		fprintf(stderr, "conexion rechazada\n");
     	exit(1);
 	}
 	int len = strlen(nombre)+1;
@@ -40,12 +46,10 @@ int main(int argc, char **argv) {
 	read(s, &silla, sizeof(int));
 	printf("%d\n", silla);
 	scanf("%s",fin);
-	//printf("%s y su largo es %lu\n", fin, strlen(fin));
 	if (strlen(fin) != 3) {
 		fprintf(stderr, "Si termino de comer debe ingresar fin\n");
     	exit(1);	
     } else {
-    	//printf("%s\n", "hello");
     	sendstr(s, fin);
     }
 	return 0;
